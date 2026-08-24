@@ -6,6 +6,8 @@ import LanguagePicker from "@/components/LanguagePicker";
 import ProgressBar from "@/components/ProgressBar";
 import KonarkWheelPanel from "@/components/KonarkWheelPanel";
 import TempleSpirePanel from "@/components/TempleSpirePanel";
+import MotifBackdrop from "@/components/MotifBackdrop";
+import SectionBanner from "@/components/SectionBanner";
 import { Domain, Lang } from "@/lib/gemini";
 import { PipelineFailure, PipelineProgress, runTranslationPipeline } from "@/lib/pipeline";
 import {
@@ -292,6 +294,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col items-center px-6 py-16 relative overflow-hidden">
       <div className="serene-ambient" aria-hidden="true" />
+      <MotifBackdrop />
       <KonarkWheelPanel />
       <TempleSpirePanel />
 
@@ -306,6 +309,15 @@ export default function App() {
           in one go. Pick any source language and any target language. Runs entirely in your
           browser via the Gemini API — no server, no upload to any backend.
         </p>
+
+        <SectionBanner
+          theme="manuscript"
+          label="Your document"
+          labelAlt="ଆପଣଙ୍କ ଦଲିଲ"
+          className="mb-6"
+        />
+
+
 
         {progress.stage === "idle" && (
           <>
@@ -366,6 +378,8 @@ export default function App() {
             )}
 
             <div className="mt-8 space-y-6">
+              <SectionBanner theme="calligraphy" label="Connection" labelAlt="ସଂଯୋଗ" />
+
               <ApiKeyInput
                 provider={provider}
                 onProviderChange={updateProvider}
@@ -376,6 +390,8 @@ export default function App() {
                 groqKey={groqKey}
                 onGroqKeyChange={updateGroqKey}
               />
+
+              <SectionBanner theme="motif" label="Languages & domain" labelAlt="ଭାଷା ଓ କ୍ଷେତ୍ର" />
 
               <div>
                 <p className="text-sm font-medium mb-2">Translate from</p>
@@ -392,8 +408,11 @@ export default function App() {
                 <DomainPicker value={domain} onChange={setDomain} />
               </div>
 
+              <SectionBanner theme="manuscript" label="Speed & output" labelAlt="ଗତି ଓ ଫଳାଫଳ" />
+
+
               <div className="rounded-xl border border-ink/10 bg-white/40 p-4 space-y-3">
-                <p className="text-sm font-medium">Speed & output</p>
+                
 
                 <label className="flex items-start gap-2 text-xs text-ink/70 cursor-pointer">
                   <input
