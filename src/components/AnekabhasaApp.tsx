@@ -291,12 +291,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center px-6 py-16 relative overflow-hidden">
-      <div className="rainbow-ambient" aria-hidden="true" />
+      <div className="serene-ambient" aria-hidden="true" />
       <KonarkWheelPanel />
       <TempleSpirePanel />
 
       <div className="w-full max-w-2xl">
-        <h1 className="text-4xl font-extrabold mb-1 rainbow-text tracking-tight">Anekabhasa</h1>
+        <h1 className="text-4xl font-semibold mb-1 serene-text tracking-tight font-display">
+          Anekabhasa
+        </h1>
         <p className="text-ink/60 mb-10">
           Translate manuscripts and books between 14 languages — Odia, Hindi, Marathi, Gujarati,
           Kannada, Malayalam, Telugu, Bengali, Tamil, English, French, German, Spanish, and Russian
@@ -315,7 +317,7 @@ export default function App() {
             </p>
 
             {resumeInfo && !skipResume && (
-              <div className="mt-3 rounded-xl border border-[#6384ff]/30 bg-[#6384ff]/5 px-4 py-3 text-xs text-ink/70">
+              <div className="mt-3 rounded-xl border border-[#3f6f66]/30 bg-[#3f6f66]/5 px-4 py-3 text-xs text-ink/70">
                 <p className="font-medium text-ink/80 mb-1">Found saved progress for this file</p>
                 <p className="mb-2">
                   {resumeInfo.completed}/{resumeInfo.total || "?"} already done last time. Resuming
@@ -325,7 +327,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setResumeInfo(null)}
-                    className="rainbow-fill rounded-lg px-3 py-1.5 text-white font-medium"
+                    className="serene-fill rounded-lg px-3 py-1.5 text-white font-medium"
                   >
                     Resume
                   </button>
@@ -352,7 +354,7 @@ export default function App() {
                   type="checkbox"
                   checked={forceOcr}
                   onChange={(e) => setForceOcr(e.target.checked)}
-                  className="mt-0.5 accent-[#6384ff]"
+                  className="mt-0.5 accent-[#3f6f66]"
                 />
                 <span>
                   Force OCR for this PDF — use if the extracted text comes out with scrambled
@@ -398,7 +400,7 @@ export default function App() {
                     type="checkbox"
                     checked={fastMode}
                     onChange={(e) => setFastMode(e.target.checked)}
-                    className="mt-0.5 accent-[#6384ff]"
+                    className="mt-0.5 accent-[#3f6f66]"
                   />
                   <span>
                     <span className="font-medium text-ink/80">Fast mode</span> — raises parallelism
@@ -433,7 +435,7 @@ export default function App() {
             <button
               onClick={() => handleSubmit()}
               disabled={!file || !(provider === "groq" ? groqKey : apiKey)}
-              className="rainbow-fill mt-8 w-full rounded-xl text-white font-semibold py-3 shadow-lg shadow-black/5 disabled:opacity-40 disabled:animate-none transition-opacity hover:brightness-105"
+              className="serene-fill mt-8 w-full rounded-xl text-white font-semibold py-3 shadow-lg shadow-black/5 disabled:opacity-40 disabled:animate-none transition-opacity hover:brightness-105"
             >
               Translate document
             </button>
@@ -517,7 +519,7 @@ export default function App() {
                     onClick={() =>
                       progress.buildPartial && handleDownloadPartial(progress.buildPartial)
                     }
-                    className="rainbow-border rounded-xl px-5 py-2.5 text-sm font-medium hover:brightness-105"
+                    className="serene-border rounded-xl px-5 py-2.5 text-sm font-medium hover:brightness-105"
                   >
                     Download progress so far (
                     {Math.round((progress.completed / Math.max(progress.total, 1)) * 100)}%)
@@ -543,7 +545,7 @@ export default function App() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => handleSubmit()}
-                    className="rainbow-fill rounded-xl px-6 py-3 font-medium text-white hover:brightness-105"
+                    className="serene-fill rounded-xl px-6 py-3 font-medium text-white hover:brightness-105"
                   >
                     {isStoppedFailure
                       ? "Resume"
@@ -556,7 +558,7 @@ export default function App() {
                     partialFailure.stageAtStop === "translating" && (
                       <button
                         onClick={() => handleDownloadPartial(partialFailure.buildPartial)}
-                        className="rainbow-border rounded-xl px-6 py-3 font-medium hover:brightness-105"
+                        className="serene-border rounded-xl px-6 py-3 font-medium hover:brightness-105"
                       >
                         Download what's done ({partialFailure.completed}/{partialFailure.total}{" "}
                         chunks)
@@ -575,8 +577,8 @@ export default function App() {
         )}
 
         {progress.stage === "done" && downloadUrl && (
-          <div className="rainbow-border rounded-3xl p-10 text-center bg-white/60 backdrop-blur-sm shadow-xl shadow-black/5">
-            <div className="rainbow-fill mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full shadow-lg shadow-black/10 rainbow-glow">
+          <div className="serene-border rounded-3xl p-10 text-center bg-white/60 backdrop-blur-sm shadow-xl shadow-black/5">
+            <div className="serene-fill mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full shadow-lg shadow-black/10 serene-glow">
               <svg viewBox="0 0 24 24" className="h-8 w-8 text-white" fill="none">
                 <path
                   d="M5 13l4 4L19 7"
@@ -588,7 +590,9 @@ export default function App() {
               </svg>
             </div>
 
-            <h2 className="text-2xl font-extrabold rainbow-text mb-1">Translation complete!</h2>
+            <h2 className="text-2xl font-semibold serene-text mb-1 font-display">
+              Translation complete
+            </h2>
             <p className="text-ink/60 mb-6">
               {file?.name} →{" "}
               <span className="font-medium text-ink/80">{LANG_LABELS[targetLang]}</span>
@@ -605,7 +609,7 @@ export default function App() {
             <a
               href={downloadUrl}
               download={downloadName}
-              className="rainbow-fill inline-flex items-center gap-2 rounded-xl text-white font-semibold px-8 py-3.5 shadow-lg shadow-black/10 hover:brightness-105 hover:scale-[1.02] transition-transform"
+              className="serene-fill inline-flex items-center gap-2 rounded-xl text-white font-semibold px-8 py-3.5 shadow-lg shadow-black/10 hover:brightness-105 hover:scale-[1.02] transition-transform"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none">
                 <path

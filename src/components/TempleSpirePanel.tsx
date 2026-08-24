@@ -10,12 +10,8 @@ export default function TempleSpirePanel() {
       <svg viewBox="0 0 200 400" className="w-full h-auto opacity-[0.14]" fill="none">
         <defs>
           <linearGradient id="templeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#b06cff" />
-            <stop offset="20%" stopColor="#6384ff" />
-            <stop offset="40%" stopColor="#3fbfdb" />
-            <stop offset="60%" stopColor="#62e09c" />
-            <stop offset="80%" stopColor="#ffb03b" />
-            <stop offset="100%" stopColor="#ff5a5f" />
+            <stop offset="0%" stopColor="#c4a464" />
+            <stop offset="100%" stopColor="#3f6f66" />
           </linearGradient>
         </defs>
 

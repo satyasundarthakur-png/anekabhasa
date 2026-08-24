@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Translate whole Odia .docx or .pdf documents into 13 languages, right in your browser.",
       },
       { name: "author", content: "Lovable" },
-      { name: "theme-color", content: "#6384ff" },
+      { name: "theme-color", content: "#3f6f66" },
       { property: "og:title", content: "Anekabhasa — Odia Document Translator" },
       {
         property: "og:description",
@@ -113,7 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Oriya&family=Noto+Sans+Devanagari&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Noto+Sans+Oriya&family=Noto+Sans+Devanagari&display=swap",
       },
     ],
   }),

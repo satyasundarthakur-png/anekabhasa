@@ -40,7 +40,7 @@ export default function LanguagePicker({ value, onChange, exclude }: Props) {
           onClick={() => onChange(lang.value)}
           className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
             value === lang.value
-              ? "rainbow-fill text-white border-transparent shadow-md shadow-black/5 scale-105"
+              ? "serene-fill text-white border-transparent shadow-md shadow-black/5 scale-105"
               : "border-ink/20 text-ink/70 hover:border-ink/40"
           }`}
         >

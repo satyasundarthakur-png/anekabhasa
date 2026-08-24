@@ -12,12 +12,8 @@ export default function KonarkWheelPanel() {
       <svg viewBox="0 0 200 400" className="w-full h-auto opacity-[0.14]" fill="none">
         <defs>
           <linearGradient id="konarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#ff5a5f" />
-            <stop offset="20%" stopColor="#ffb03b" />
-            <stop offset="40%" stopColor="#62e09c" />
-            <stop offset="60%" stopColor="#3fbfdb" />
-            <stop offset="80%" stopColor="#6384ff" />
-            <stop offset="100%" stopColor="#b06cff" />
+            <stop offset="0%" stopColor="#3f6f66" />
+            <stop offset="100%" stopColor="#c4a464" />
           </linearGradient>
         </defs>
 

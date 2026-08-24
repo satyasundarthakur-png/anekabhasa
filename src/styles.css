@@ -62,7 +62,9 @@
   --color-paper: var(--paper);
   --color-ink: var(--ink);
   --color-accent-brand: var(--accent-brand);
+  --color-accent-brass: var(--accent-brass);
   --font-sans: "Inter", "Noto Sans Oriya", "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-display: var(--display-font-family);
 }
 
 :root {
@@ -99,11 +101,17 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
-  --paper: oklch(0.977 0.008 85.87);
-  --ink: oklch(0.259 0.011 55.5);
-  --accent-brand: oklch(0.523 0.132 35.5);
+  /* Serene palette — quiet mist-sage paper, deep slate-indigo ink (like fresh iron-gall
+     ink on old paper), a muted jade accent for action, and a soft brass for the rare
+     moment of celebration. Deliberately cool and low-saturation rather than the warm
+     cream+terracotta combination that's become an AI-default. */
+  --paper: oklch(0.975 0.008 165);
+  --ink: oklch(0.28 0.035 255);
+  --accent-brand: oklch(0.52 0.075 175);
+  --accent-brass: oklch(0.78 0.09 85);
   --background: var(--paper);
   --foreground: var(--ink);
+  --display-font-family: "Fraunces", "Noto Serif Oriya", "Noto Serif Devanagari", serif;
 }
 
 .dark {
@@ -154,48 +162,17 @@
 }
 
 /*
- * Rainbow theme utilities.
- * A single animated gradient (--rainbow-gradient) reused everywhere — the wordmark,
- * buttons, progress bar, borders, and the ambient background glow — so the palette
- * stays consistent instead of drifting per-component.
+ * Serene theme utilities.
+ * One quiet two-tone gradient (--serene-gradient: jade -> brass) reused everywhere the
+ * old rainbow used to appear — the wordmark, buttons, progress bar, borders, ambient
+ * glow — so the palette stays consistent. Motion is minimal and slow by design: a
+ * serene interface holds still and only breathes gently, it doesn't perform.
  */
 :root {
-  --rainbow-gradient: linear-gradient(
-    90deg,
-    #ff5a5f,
-    #ffb03b,
-    #ffe066,
-    #62e09c,
-    #3fbfdb,
-    #6384ff,
-    #b06cff,
-    #ff5a5f
-  );
+  --serene-gradient: linear-gradient(115deg, var(--accent-brand), var(--accent-brass));
 }
 
-@keyframes rainbow-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
-}
-
-@keyframes rainbow-blob-float {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(3%, -4%) scale(1.08);
-  }
-  66% {
-    transform: translate(-3%, 3%) scale(0.96);
-  }
-}
-
-@keyframes rainbow-pulse {
+@keyframes serene-breathe {
   0%,
   100% {
     opacity: 0.9;
@@ -205,79 +182,70 @@
   }
 }
 
-/* Ambient animated aurora glow behind the whole page, kept subtle and blurred so body
-   text stays fully legible on top of it. */
-.rainbow-ambient {
+@keyframes serene-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-2%, 2%) scale(1.03);
+  }
+}
+
+/* Ambient glow behind the whole page — two still, very soft pools of colour rather than
+   a moving gradient, so the background reads as calm light rather than motion. */
+.serene-ambient {
   position: fixed;
   inset: -20%;
   z-index: -1;
-  background: var(--rainbow-gradient);
-  background-size: 200% 200%;
-  filter: blur(80px);
-  opacity: 0.28;
-  animation: rainbow-shift 18s linear infinite, rainbow-blob-float 22s ease-in-out infinite;
+  background: radial-gradient(circle at 20% 15%, var(--accent-brand) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, var(--accent-brass) 0%, transparent 45%);
+  opacity: 0.1;
+  animation: serene-drift 40s ease-in-out infinite;
   pointer-events: none;
 }
 
-.dark .rainbow-ambient {
-  opacity: 0.22;
+.dark .serene-ambient {
+  opacity: 0.14;
 }
 
-/* Animated gradient text, used for the wordmark. */
-.rainbow-text {
-  background: var(--rainbow-gradient);
-  background-size: 200% auto;
+/* Static gradient text, used for the wordmark — no motion, just a quiet two-tone fill. */
+.serene-text {
+  background: var(--serene-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: rainbow-shift 6s linear infinite;
 }
 
-/* Animated gradient fill, used for primary buttons and the progress bar. */
-.rainbow-fill {
-  background: var(--rainbow-gradient);
-  background-size: 200% auto;
-  animation: rainbow-shift 5s linear infinite;
+/* Static gradient fill, used for primary buttons and the progress bar. */
+.serene-fill {
+  background: var(--serene-gradient);
 }
 
-/* Animated gradient border via padding-box/border-box trick — works on any bg. */
-.rainbow-border {
-  border: 2px solid transparent;
-  background-image: linear-gradient(var(--paper), var(--paper)), var(--rainbow-gradient);
+/* Gradient border via padding-box/border-box trick — works on any bg, no animation. */
+.serene-border {
+  border: 1.5px solid transparent;
+  background-image: linear-gradient(var(--paper), var(--paper)), var(--serene-gradient);
   background-origin: border-box;
   background-clip: padding-box, border-box;
-  background-size: auto, 200% auto;
-  animation: rainbow-shift 5s linear infinite;
 }
 
-.dark .rainbow-border {
-  background-image: linear-gradient(var(--background), var(--background)), var(--rainbow-gradient);
+.dark .serene-border {
+  background-image: linear-gradient(var(--background), var(--background)), var(--serene-gradient);
 }
 
-/* Reveals a soft animated rainbow ring, applied via a JS-driven .is-active class rather
-   than relying on CSS :hover — :hover is unreliable on touch devices, and this way the
-   same state also responds to focus and drag. Plain rgba box-shadows (not color-mix) for
-   universal support: a single unsupported color-mix() value would silently drop the whole
-   box-shadow declaration in browsers without that interpolation mode. */
-.rainbow-glow-ring {
-  box-shadow: 0 0 0 3px rgba(99, 132, 255, 0.35), 0 0 24px 4px rgba(176, 108, 255, 0.28);
-  transition: box-shadow 0.25s ease;
+/* Reveals a soft focus ring, applied via a JS-driven .is-active class rather than
+   relying on CSS :hover — :hover is unreliable on touch devices, and this way the
+   same state also responds to focus and drag. A single still ring, not a pulsing one. */
+.serene-glow-ring {
+  box-shadow: 0 0 0 3px rgba(87, 130, 122, 0.22), 0 0 20px 2px rgba(87, 130, 122, 0.12);
+  transition: box-shadow 0.3s ease;
 }
 
-.rainbow-glow-ring.is-active {
-  animation: rainbow-glow-pulse 1.8s ease-in-out infinite;
+.serene-glow-ring.is-active {
+  box-shadow: 0 0 0 3px rgba(87, 130, 122, 0.32), 0 0 28px 6px rgba(196, 164, 100, 0.22);
 }
 
-@keyframes rainbow-glow-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.35), 0 0 26px 6px rgba(99, 132, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 0 3px rgba(176, 108, 255, 0.4), 0 0 32px 8px rgba(63, 191, 219, 0.35);
-  }
-}
-
-.rainbow-glow {
-  animation: rainbow-pulse 3s ease-in-out infinite;
+.serene-glow {
+  animation: serene-breathe 4s ease-in-out infinite;
 }

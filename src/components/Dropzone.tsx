@@ -43,9 +43,9 @@ export default function Dropzone({ onFileSelected, selectedFile }: Props) {
       onFocus={() => setActive(true)}
       onBlur={() => setActive(false)}
       tabIndex={0}
-      className={`rainbow-glow-ring ${showGlow ? "is-active" : ""} flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-16 text-center cursor-pointer transition-all duration-300 ${
+      className={`serene-glow-ring ${showGlow ? "is-active" : ""} flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-16 text-center cursor-pointer transition-all duration-300 ${
         dragOver
-          ? "border-transparent rainbow-border bg-white/40 scale-[1.01]"
+          ? "border-transparent serene-border bg-white/40 scale-[1.01]"
           : "border-ink/20 hover:border-ink/40"
       }`}
     >
