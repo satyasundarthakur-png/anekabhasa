@@ -378,6 +378,8 @@ export default function App() {
             )}
 
             <div className="mt-8 space-y-6">
+              <SectionBanner theme="calligraphy" label="Connection" labelAlt="ସଂଯୋଗ" />
+
               <ApiKeyInput
                 provider={provider}
                 onProviderChange={updateProvider}
@@ -388,6 +390,8 @@ export default function App() {
                 groqKey={groqKey}
                 onGroqKeyChange={updateGroqKey}
               />
+
+              <SectionBanner theme="motif" label="Languages & domain" labelAlt="ଭାଷା ଓ କ୍ଷେତ୍ର" />
 
               <div>
                 <p className="text-sm font-medium mb-2">Translate from</p>
@@ -403,6 +407,9 @@ export default function App() {
                 <p className="text-sm font-medium mb-2">Domain (tunes terminology)</p>
                 <DomainPicker value={domain} onChange={setDomain} />
               </div>
+
+              <SectionBanner theme="manuscript" label="Speed & output" labelAlt="ଗତି ଓ ଫଳାଫଳ" />
+
 
               <div className="rounded-xl border border-ink/10 bg-white/40 p-4 space-y-3">
                 <p className="text-sm font-medium">Speed & output</p>
