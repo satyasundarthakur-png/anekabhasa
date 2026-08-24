@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "OdiaSetu — Odia Document Translator" },
+      { title: "Anekabhasa — Odia Document Translator" },
       {
         name: "description",
         content:
@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Lovable" },
       { name: "theme-color", content: "#6384ff" },
-      { property: "og:title", content: "OdiaSetu — Odia Document Translator" },
+      { property: "og:title", content: "Anekabhasa — Odia Document Translator" },
       {
         property: "og:description",
         content:

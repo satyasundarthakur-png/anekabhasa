@@ -1,18 +1,18 @@
 import { createFileRoute, ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
-const OdiaSetuApp = lazy(() => import("@/components/OdiaSetuApp"));
+const AnekabhasaApp = lazy(() => import("@/components/AnekabhasaApp"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "OdiaSetu — Odia Document Translator" },
+      { title: "Anekabhasa — Odia Document Translator" },
       {
         name: "description",
         content:
           "Translate whole Odia .docx or .pdf manuscripts into Hindi, Marathi, Gujarati, Kannada, Malayalam, Telugu, Bengali, Tamil, English, French, German, Spanish, or Russian, entirely in your browser.",
       },
-      { property: "og:title", content: "OdiaSetu — Odia Document Translator" },
+      { property: "og:title", content: "Anekabhasa — Odia Document Translator" },
       {
         property: "og:description",
         content:
@@ -31,7 +31,7 @@ function Index() {
   return (
     <ClientOnly fallback={<div className="min-h-screen bg-paper" />}>
       <Suspense fallback={<div className="min-h-screen bg-paper" />}>
-        <OdiaSetuApp />
+        <AnekabhasaApp />
       </Suspense>
     </ClientOnly>
   );

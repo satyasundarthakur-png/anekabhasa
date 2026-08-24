@@ -254,7 +254,7 @@ export default function App() {
       <TempleSpirePanel />
 
       <div className="w-full max-w-2xl">
-        <h1 className="text-4xl font-extrabold mb-1 rainbow-text tracking-tight">OdiaSetu</h1>
+        <h1 className="text-4xl font-extrabold mb-1 rainbow-text tracking-tight">Anekabhasa</h1>
         <p className="text-ink/60 mb-10">
           Translate manuscripts and books between 14 languages — Odia, Hindi, Marathi, Gujarati,
           Kannada, Malayalam, Telugu, Bengali, Tamil, English, French, German, Spanish, and Russian

@@ -1,9 +1,9 @@
-# OdiaSetu
+# Anekabhasa
 
 Translate Odia manuscripts and documents into Hindi, Marathi, Gujarati, Kannada, Malayalam,
 Telugu, or English — whole `.docx` or `.pdf` files, in one go, entirely in your browser.
 
-**Live app**: https://odiasetu.lovable.app
+**Live app**: https://anekabhasa.lovable.app
 
 This project was built with [Lovable](https://lovable.dev).
 
@@ -51,7 +51,7 @@ never sees or stores it anywhere else.
 ```
 src/
   components/
-    OdiaSetuApp.tsx        Main app: upload → translate → download
+    AnekabhasaApp.tsx        Main app: upload → translate → download
     Dropzone.tsx            File picker/drop target (.docx, .pdf)
     ApiKeyInput.tsx         Gemini API key entry (localStorage-backed)
     LanguagePicker.tsx      Target language selector

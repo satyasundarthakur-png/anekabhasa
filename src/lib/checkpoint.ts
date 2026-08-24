@@ -9,8 +9,8 @@
 // one you might come back to. Oldest entries are evicted once the cap is exceeded.
 import type { Domain, GlossaryEntry, SourceLang, TargetLang } from "./gemini";
 
-const STORAGE_KEY = "odiasetu.checkpoints.v2";
-const OLD_SINGLE_SLOT_KEY = "odiasetu.checkpoint.v1";
+const STORAGE_KEY = "anekabhasa.checkpoints.v2";
+const OLD_SINGLE_SLOT_KEY = "anekabhasa.checkpoint.v1";
 
 // At least a handful of recent jobs are kept around automatically.
 export const MAX_HISTORY_ENTRIES = 8;
