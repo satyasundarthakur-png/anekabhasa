@@ -59,6 +59,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-accent-brand: var(--accent-brand);
+  --font-sans: "Inter", "Noto Sans Oriya", "Noto Sans Devanagari", system-ui, sans-serif;
 }
 
 :root {
@@ -95,6 +99,11 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --paper: oklch(0.977 0.008 85.87);
+  --ink: oklch(0.259 0.011 55.5);
+  --accent-brand: oklch(0.523 0.132 35.5);
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 .dark {
@@ -138,7 +147,137 @@
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
   }
+}
+
+/*
+ * Rainbow theme utilities.
+ * A single animated gradient (--rainbow-gradient) reused everywhere — the wordmark,
+ * buttons, progress bar, borders, and the ambient background glow — so the palette
+ * stays consistent instead of drifting per-component.
+ */
+:root {
+  --rainbow-gradient: linear-gradient(
+    90deg,
+    #ff5a5f,
+    #ffb03b,
+    #ffe066,
+    #62e09c,
+    #3fbfdb,
+    #6384ff,
+    #b06cff,
+    #ff5a5f
+  );
+}
+
+@keyframes rainbow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes rainbow-blob-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(3%, -4%) scale(1.08);
+  }
+  66% {
+    transform: translate(-3%, 3%) scale(0.96);
+  }
+}
+
+@keyframes rainbow-pulse {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Ambient animated aurora glow behind the whole page, kept subtle and blurred so body
+   text stays fully legible on top of it. */
+.rainbow-ambient {
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  background: var(--rainbow-gradient);
+  background-size: 200% 200%;
+  filter: blur(80px);
+  opacity: 0.28;
+  animation: rainbow-shift 18s linear infinite, rainbow-blob-float 22s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.dark .rainbow-ambient {
+  opacity: 0.22;
+}
+
+/* Animated gradient text, used for the wordmark. */
+.rainbow-text {
+  background: var(--rainbow-gradient);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow-shift 6s linear infinite;
+}
+
+/* Animated gradient fill, used for primary buttons and the progress bar. */
+.rainbow-fill {
+  background: var(--rainbow-gradient);
+  background-size: 200% auto;
+  animation: rainbow-shift 5s linear infinite;
+}
+
+/* Animated gradient border via padding-box/border-box trick — works on any bg. */
+.rainbow-border {
+  border: 2px solid transparent;
+  background-image: linear-gradient(var(--paper), var(--paper)), var(--rainbow-gradient);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: auto, 200% auto;
+  animation: rainbow-shift 5s linear infinite;
+}
+
+.dark .rainbow-border {
+  background-image: linear-gradient(var(--background), var(--background)), var(--rainbow-gradient);
+}
+
+/* Reveals a soft animated rainbow ring, applied via a JS-driven .is-active class rather
+   than relying on CSS :hover — :hover is unreliable on touch devices, and this way the
+   same state also responds to focus and drag. Plain rgba box-shadows (not color-mix) for
+   universal support: a single unsupported color-mix() value would silently drop the whole
+   box-shadow declaration in browsers without that interpolation mode. */
+.rainbow-glow-ring {
+  box-shadow: 0 0 0 3px rgba(99, 132, 255, 0.35), 0 0 24px 4px rgba(176, 108, 255, 0.28);
+  transition: box-shadow 0.25s ease;
+}
+
+.rainbow-glow-ring.is-active {
+  animation: rainbow-glow-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes rainbow-glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.35), 0 0 26px 6px rgba(99, 132, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(176, 108, 255, 0.4), 0 0 32px 8px rgba(63, 191, 219, 0.35);
+  }
+}
+
+.rainbow-glow {
+  animation: rainbow-pulse 3s ease-in-out infinite;
 }
