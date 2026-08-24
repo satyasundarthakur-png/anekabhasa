@@ -6,6 +6,8 @@ import LanguagePicker from "@/components/LanguagePicker";
 import ProgressBar from "@/components/ProgressBar";
 import KonarkWheelPanel from "@/components/KonarkWheelPanel";
 import TempleSpirePanel from "@/components/TempleSpirePanel";
+import MotifBackdrop from "@/components/MotifBackdrop";
+import SectionBanner from "@/components/SectionBanner";
 import { Domain, Lang } from "@/lib/gemini";
 import { PipelineFailure, PipelineProgress, runTranslationPipeline } from "@/lib/pipeline";
 import {
