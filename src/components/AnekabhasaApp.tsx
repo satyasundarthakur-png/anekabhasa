@@ -310,6 +310,15 @@ export default function App() {
           browser via the Gemini API — no server, no upload to any backend.
         </p>
 
+        <SectionBanner
+          theme="manuscript"
+          label="Your document"
+          labelAlt="ଆପଣଙ୍କ ଦଲିଲ"
+          className="mb-6"
+        />
+
+
+
         {progress.stage === "idle" && (
           <>
             <Dropzone onFileSelected={setFile} selectedFile={file} />
