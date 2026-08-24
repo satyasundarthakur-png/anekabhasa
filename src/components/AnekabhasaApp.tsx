@@ -294,6 +294,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col items-center px-6 py-16 relative overflow-hidden">
       <div className="serene-ambient" aria-hidden="true" />
+      <MotifBackdrop />
       <KonarkWheelPanel />
       <TempleSpirePanel />
 
