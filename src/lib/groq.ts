@@ -1,53 +1,11 @@
-// Direct browser -> Gemini calls. No Supabase, no edge functions, no Hugging Face —
-// this is the entire translation engine now.
+// Direct browser -> Groq calls, mirroring gemini.ts's interface so the pipeline can swap
+// providers without caring which one is actually doing the translating. Groq's API is
+// OpenAI-compatible (chat/completions), unlike Gemini's generateContent shape.
 import { checkAborted } from "./abort";
+import { LANG_NAMES } from "./gemini";
+import type { Domain, GlossaryEntry, SourceLang, TargetLang } from "./gemini";
 
-// A single shared language set used for BOTH the source and target side of a job. Any
-// language here can be the source, translated into any other language here as the
-// target — the pipeline itself doesn't care which side is which, it just needs a name
-// and a script hint for whichever role a given language is playing in a given job.
-export type Lang =
-  | "or"
-  | "hi"
-  | "mr"
-  | "gu"
-  | "kn"
-  | "ml"
-  | "te"
-  | "bn"
-  | "ta"
-  | "fr"
-  | "de"
-  | "es"
-  | "ru"
-  | "en";
-// Kept as aliases (rather than replaced) so existing call sites and imports elsewhere in
-// the app that refer to SourceLang/TargetLang keep working unchanged.
-export type SourceLang = Lang;
-export type TargetLang = Lang;
-export type Domain = "spiritual" | "literature" | "medical";
-
-export interface GlossaryEntry {
-  source: string;
-  target: string;
-}
-
-export const LANG_NAMES: Record<Lang, string> = {
-  or: "Odia (Odia script)",
-  hi: "Hindi (Devanagari script)",
-  mr: "Marathi (Devanagari script)",
-  gu: "Gujarati (Gujarati script)",
-  kn: "Kannada (Kannada script)",
-  ml: "Malayalam (Malayalam script)",
-  te: "Telugu (Telugu script)",
-  bn: "Bengali (Bengali script)",
-  ta: "Tamil (Tamil script)",
-  fr: "French",
-  de: "German",
-  es: "Spanish",
-  ru: "Russian (Cyrillic script)",
-  en: "English",
-};
+const DEFAULT_MODEL = "openai/gpt-oss-120b";
 
 const DOMAIN_HINTS: Record<Domain, string> = {
   spiritual:
@@ -58,9 +16,7 @@ const DOMAIN_HINTS: Record<Domain, string> = {
     "This is medical/clinical text — case notes, textbook material, formularies, or traditional-medicine (Ayurvedic) content. Use precise standard medical terminology in the target language; keep drug names, dosages, anatomical terms, and clinical measurements unchanged. For Ayurvedic/traditional-medicine terms without a direct clinical equivalent, keep the original term (transliterated) alongside a brief clarifying gloss on first use rather than inventing a translation.",
 };
 
-const DEFAULT_MODEL = "gemini-2.5-flash";
-
-export class GeminiError extends Error {
+export class GroqError extends Error {
   public readonly status: number | undefined;
 
   constructor(message: string, status?: number) {
@@ -70,8 +26,6 @@ export class GeminiError extends Error {
 }
 
 function isRetryableStatus(status: number): boolean {
-  // 429 = rate limit / quota, 500/502/503/504 = transient server-side failure. Everything
-  // else (400 bad request, 401/403 bad key) is not going to fix itself on retry.
   return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
 }
 
@@ -82,22 +36,20 @@ function sleep(ms: number): Promise<void> {
 const MAX_RETRIES = 4;
 const BASE_DELAY_MS = 1500;
 
-async function callGemini(
+async function callGroq(
   apiKey: string,
   system: string,
   user: string,
   signal?: AbortSignal,
   model: string = DEFAULT_MODEL,
 ): Promise<string> {
-  if (!apiKey) throw new GeminiError("Missing Gemini API key. Add it above before translating.");
+  if (!apiKey) throw new GroqError("Missing Groq API key. Add it above before translating.");
 
-  let lastErr: GeminiError | null = null;
+  let lastErr: GroqError | null = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     checkAborted(signal);
     if (attempt > 0) {
-      // Exponential backoff with a little jitter, so a burst of concurrent chunks that all
-      // hit a rate limit at once don't all retry in lockstep and hit it again immediately.
       const delay = BASE_DELAY_MS * 2 ** (attempt - 1) * (0.75 + Math.random() * 0.5);
       await sleep(delay);
       checkAborted(signal);
@@ -105,47 +57,46 @@ async function callGemini(
 
     let res: Response;
     try {
-      res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
-          apiKey,
-        )}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: system }] },
-            contents: [{ role: "user", parts: [{ text: user }] }],
-            generationConfig: { temperature: 0.2 },
-          }),
-          signal: signal ?? null,
+      res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
         },
-      );
+        body: JSON.stringify({
+          model,
+          temperature: 0.2,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: user },
+          ],
+        }),
+        signal: signal ?? null,
+      });
     } catch (networkErr) {
-      if (signal?.aborted) throw networkErr; // propagate the abort itself, don't retry it as a network blip
-      // Network-level failure (offline, DNS, CORS blip) — worth retrying the same way as
-      // a transient server error.
-      lastErr = new GeminiError(`Network error calling Gemini: ${String(networkErr)}`);
+      if (signal?.aborted) throw networkErr;
+      lastErr = new GroqError(`Network error calling Groq: ${String(networkErr)}`);
       continue;
     }
 
     if (!res.ok) {
       const errText = await res.text();
-      const err = new GeminiError(`Gemini API error ${res.status}: ${errText}`, res.status);
+      const err = new GroqError(`Groq API error ${res.status}: ${errText}`, res.status);
       if (!isRetryableStatus(res.status)) throw err;
       lastErr = err;
       continue;
     }
 
     const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "";
+    const text = data?.choices?.[0]?.message?.content ?? "";
     if (!text) {
-      lastErr = new GeminiError("Gemini returned an empty response");
+      lastErr = new GroqError("Groq returned an empty response");
       continue;
     }
     return text;
   }
 
-  throw lastErr ?? new GeminiError("Gemini call failed after retries");
+  throw lastErr ?? new GroqError("Groq call failed after retries");
 }
 
 function buildTranslatePrompt(
@@ -196,14 +147,12 @@ function parseMarkedOutput(output: string, expectedCount: number): string[] | nu
     const start = cur.index! + cur[0].length;
     const end = next ? next.index! : output.length;
     const num = parseInt(cur[1] ?? "0", 10);
-    if (num !== i + 1) return null; // out of order
+    if (num !== i + 1) return null;
     results.push(output.slice(start, end).trim());
   }
   return results;
 }
 
-// Translates one chunk (a batch of paragraphs). Falls back to paragraph-by-paragraph
-// translation if the marker-based batch response ever comes back malformed.
 export async function translateChunk(
   apiKey: string,
   paragraphs: string[],
@@ -230,14 +179,14 @@ export async function translateChunk(
       attempt === 0
         ? user
         : `${user}\n\nREMINDER: output exactly ${paragraphs.length} markers [[P1]]..[[P${paragraphs.length}]], one per paragraph, no extra text.`;
-    const raw = await callGemini(apiKey, system, prompt, signal, model);
+    const raw = await callGroq(apiKey, system, prompt, signal, model);
     translated = parseMarkedOutput(raw, paragraphs.length);
   }
 
   if (!translated) {
     translated = [];
     for (const p of paragraphs) {
-      const single = await callGemini(apiKey, system, `[[P1]]\n${p}`, signal, model);
+      const single = await callGroq(apiKey, system, `[[P1]]\n${p}`, signal, model);
       const parsed = parseMarkedOutput(single, 1);
       translated.push(parsed?.[0] ?? single.trim());
     }
@@ -248,10 +197,6 @@ export async function translateChunk(
 
 const MAX_GLOSSARY_SAMPLE_CHARS = 12000;
 
-// One cheap call up front: scans a representative sample of the document and asks Gemini
-// for a consistent glossary of proper nouns / recurring terms, which then gets injected
-// into every chunk's translation prompt. This is what stops the same name being rendered
-// three different ways across a long manuscript.
 export async function buildGlossary(
   apiKey: string,
   allParagraphs: string[],
@@ -278,13 +223,12 @@ consistent ${langName} rendering. Respond ONLY with a JSON array like:
 Keep it to the most important 15-40 terms. No commentary, no markdown fences, just the JSON array.`;
 
   try {
-    const raw = await callGemini(apiKey, system, sample, signal, model);
+    const raw = await callGroq(apiKey, system, sample, signal, model);
     const cleaned = raw.replace(/```json|```/g, "").trim();
     const parsed = JSON.parse(cleaned);
     if (Array.isArray(parsed)) return parsed;
     return [];
   } catch {
-    // Glossary failure is non-fatal — translation proceeds without it.
     return [];
   }
 }

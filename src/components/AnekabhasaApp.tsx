@@ -8,7 +8,17 @@ import KonarkWheelPanel from "@/components/KonarkWheelPanel";
 import TempleSpirePanel from "@/components/TempleSpirePanel";
 import { Domain, Lang } from "@/lib/gemini";
 import { PipelineFailure, PipelineProgress, runTranslationPipeline } from "@/lib/pipeline";
-import { getApiKey, setApiKey as saveApiKey } from "@/lib/settings";
+import {
+  getApiKey,
+  setApiKey as saveApiKey,
+  getGroqApiKey,
+  setGroqApiKey as saveGroqApiKey,
+  getProvider,
+  setProvider as saveProvider,
+  getModel,
+  setModel as saveModel,
+} from "@/lib/settings";
+import type { Provider } from "@/lib/settings";
 import { isPdfFile } from "@/lib/pdfCore";
 import {
   Checkpoint,
@@ -91,6 +101,9 @@ async function downloadBlob(blob: Blob, name: string) {
 
 export default function App() {
   const [apiKey, setApiKeyState] = useState("");
+  const [groqKey, setGroqKeyState] = useState("");
+  const [provider, setProviderState] = useState<Provider>("gemini");
+  const [model, setModelState] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [sourceLang, setSourceLang] = useState<Lang>("or");
   const [targetLang, setTargetLang] = useState<Lang>("hi");
@@ -126,6 +139,9 @@ export default function App() {
 
   useEffect(() => {
     setApiKeyState(getApiKey());
+    setGroqKeyState(getGroqApiKey());
+    setProviderState(getProvider());
+    setModelState(getModel());
     refreshHistory();
   }, []);
 
@@ -154,6 +170,21 @@ export default function App() {
     saveApiKey(v);
   }
 
+  function updateGroqKey(v: string) {
+    setGroqKeyState(v);
+    saveGroqApiKey(v);
+  }
+
+  function updateProvider(p: Provider) {
+    setProviderState(p);
+    saveProvider(p);
+  }
+
+  function updateModel(m: string) {
+    setModelState(m);
+    saveModel(m);
+  }
+
   async function handleSubmit(opts: { forceNoResume?: boolean } = {}) {
     if (!file) return;
     setError(null);
@@ -162,13 +193,24 @@ export default function App() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
     try {
-      const blob = await runTranslationPipeline(apiKey, file, sourceLang, targetLang, domain, setProgress, {
-        forceOcr,
-        fastMode,
-        authorName: authorName.trim(),
-        resume: opts.forceNoResume ? false : !skipResume,
-        signal: controller.signal,
-      });
+      const activeKey = provider === "groq" ? groqKey : apiKey;
+      const blob = await runTranslationPipeline(
+        activeKey,
+        file,
+        sourceLang,
+        targetLang,
+        domain,
+        setProgress,
+        {
+          forceOcr,
+          fastMode,
+          authorName: authorName.trim(),
+          resume: opts.forceNoResume ? false : !skipResume,
+          signal: controller.signal,
+        },
+        provider,
+        model,
+      );
       const url = URL.createObjectURL(blob);
       setDownloadUrl(url);
       setDownloadSize(blob.size);
@@ -322,7 +364,16 @@ export default function App() {
             )}
 
             <div className="mt-8 space-y-6">
-              <ApiKeyInput value={apiKey} onChange={updateApiKey} />
+              <ApiKeyInput
+                provider={provider}
+                onProviderChange={updateProvider}
+                model={model}
+                onModelChange={updateModel}
+                geminiKey={apiKey}
+                onGeminiKeyChange={updateApiKey}
+                groqKey={groqKey}
+                onGroqKeyChange={updateGroqKey}
+              />
 
               <div>
                 <p className="text-sm font-medium mb-2">Translate from</p>
@@ -381,7 +432,7 @@ export default function App() {
 
             <button
               onClick={() => handleSubmit()}
-              disabled={!file || !apiKey}
+              disabled={!file || !(provider === "groq" ? groqKey : apiKey)}
               className="rainbow-fill mt-8 w-full rounded-xl text-white font-semibold py-3 shadow-lg shadow-black/5 disabled:opacity-40 disabled:animate-none transition-opacity hover:brightness-105"
             >
               Translate document

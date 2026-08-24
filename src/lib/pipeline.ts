@@ -1,5 +1,13 @@
-import { buildGlossary, translateChunk } from "./gemini";
+import * as geminiEngine from "./gemini";
+import * as groqEngine from "./groq";
 import type { Domain, GlossaryEntry, SourceLang, TargetLang } from "./gemini";
+import type { Provider } from "./settings";
+
+// Both engines expose the same shape (translateChunk / buildGlossary), so the provider
+// choice is just which module we point at — the rest of the pipeline doesn't need to care.
+function engineFor(provider: Provider) {
+  return provider === "groq" ? groqEngine : geminiEngine;
+}
 import { buildDocx, chunkBlocks, parseDocxToBlocks } from "./docxFile";
 import type { Chunk, TextBlock } from "./docxFile";
 import { parsePdfToBlocks } from "./pdfFile";
@@ -149,10 +157,13 @@ export async function runTranslationPipeline(
   domain: Domain,
   onProgress: (p: PipelineProgress) => void,
   options: PipelineOptions = {},
+  provider: Provider = "gemini",
+  model?: string,
 ): Promise<Blob> {
   const signal = options.signal;
   const forceOcr = options.forceOcr ?? false;
   const fastMode = options.fastMode ?? false;
+  const { buildGlossary, translateChunk } = engineFor(provider);
 
   // Computed up front (doesn't need parsed content) so OCR progress can be checkpointed
   // under the same key translation progress will use later.
@@ -247,6 +258,7 @@ export async function runTranslationPipeline(
       sourceLang,
       targetLang,
       signal,
+      model,
     ).then((g) => {
       glossary = g;
     });
@@ -341,6 +353,7 @@ export async function runTranslationPipeline(
             glossary,
             previousContext,
             signal,
+            model,
           );
           translatedParagraphsByChunk[i] = stripInvisibleMarksFromAll(translated);
           succeeded = true;
