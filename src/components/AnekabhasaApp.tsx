@@ -412,7 +412,7 @@ export default function App() {
 
 
               <div className="rounded-xl border border-ink/10 bg-white/40 p-4 space-y-3">
-                <p className="text-sm font-medium">Speed & output</p>
+                
 
                 <label className="flex items-start gap-2 text-xs text-ink/70 cursor-pointer">
                   <input
