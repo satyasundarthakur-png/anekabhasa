@@ -1,24 +1,38 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, ClientOnly } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const OdiaSetuApp = lazy(() => import("@/components/OdiaSetuApp"));
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "OdiaSetu — Odia Document Translator" },
+      {
+        name: "description",
+        content:
+          "Translate whole Odia .docx or .pdf manuscripts into Hindi, Marathi, Gujarati, Kannada, Malayalam, Telugu, Bengali, Tamil, English, French, German, Spanish, or Russian, entirely in your browser.",
+      },
+      { property: "og:title", content: "OdiaSetu — Odia Document Translator" },
+      {
+        property: "og:description",
+        content:
+          "Browser-based Odia document translation (.docx or .pdf input) into 13 languages, with domain-tuned terminology and .docx output.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/social-preview.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/social-preview.png" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <ClientOnly fallback={<div className="min-h-screen bg-paper" />}>
+      <Suspense fallback={<div className="min-h-screen bg-paper" />}>
+        <OdiaSetuApp />
+      </Suspense>
+    </ClientOnly>
   );
 }
