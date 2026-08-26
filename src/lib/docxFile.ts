@@ -10,7 +10,7 @@ export interface TextBlock {
   heading: number; // 0 = body paragraph, 1-6 = heading level
 }
 
-const CHUNK_CHAR_BUDGET = 2000;
+const CHUNK_CHAR_BUDGET = 8000;
 
 export interface Chunk {
   paragraphs: string[];
