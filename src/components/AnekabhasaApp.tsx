@@ -195,7 +195,7 @@ export default function App() {
     const controller = new AbortController();
     abortControllerRef.current = controller;
     try {
-      const activeKey = provider === "groq" ? groqKey : apiKey;
+      const activeKey = provider === "groq" ? groqKey : provider === "google" ? "" : apiKey;
       const blob = await runTranslationPipeline(
         activeKey,
         file,
@@ -453,7 +453,9 @@ export default function App() {
 
             <button
               onClick={() => handleSubmit()}
-              disabled={!file || !(provider === "groq" ? groqKey : apiKey)}
+              disabled={
+                !file || !(provider === "groq" ? groqKey : provider === "google" ? true : apiKey)
+              }
               className="serene-fill mt-8 w-full rounded-xl text-white font-semibold py-3 shadow-lg shadow-black/5 disabled:opacity-40 disabled:animate-none transition-opacity hover:brightness-105"
             >
               Translate document

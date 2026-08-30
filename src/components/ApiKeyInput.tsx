@@ -13,16 +13,27 @@ interface Props {
   onGroqKeyChange: (v: string) => void;
 }
 
-const PROVIDER_INFO: Record<Provider, { label: string; keyUrl: string; placeholder: string }> = {
+const PROVIDER_INFO: Record<
+  Provider,
+  { label: string; keyUrl: string; placeholder: string; needsKey: boolean }
+> = {
   gemini: {
     label: "Gemini API key",
     keyUrl: "https://aistudio.google.com/apikey",
     placeholder: "AIza…",
+    needsKey: true,
   },
   groq: {
     label: "Groq API key",
     keyUrl: "https://console.groq.com/keys",
     placeholder: "gsk_…",
+    needsKey: true,
+  },
+  google: {
+    label: "Google Translate (free)",
+    keyUrl: "",
+    placeholder: "",
+    needsKey: false,
   },
 };
 
@@ -59,6 +70,7 @@ export default function ApiKeyInput({
           >
             <option value="gemini">Gemini</option>
             <option value="groq">Groq</option>
+            <option value="google">Google Translate (Free)</option>
           </select>
           <select
             value={model}
@@ -77,39 +89,51 @@ export default function ApiKeyInput({
         </p>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-medium">{info.label}</p>
-          <a
-            href={info.keyUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs text-accent-brand hover:underline"
-          >
-            Get a free key ↗
-          </a>
+      {info.needsKey ? (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium">{info.label}</p>
+            <a
+              href={info.keyUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-accent-brand hover:underline"
+            >
+              Get a free key ↗
+            </a>
+          </div>
+          <div className="relative">
+            <input
+              type={show ? "text" : "password"}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={info.placeholder}
+              className="w-full rounded-lg border border-ink/20 px-4 py-2 pr-16 text-sm bg-card font-mono"
+            />
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-ink/50 hover:text-ink"
+            >
+              {show ? "Hide" : "Show"}
+            </button>
+          </div>
+          <p className="text-xs text-ink/45 mt-1.5">
+            Stored only in your browser (localStorage) and sent directly to{" "}
+            {provider === "groq" ? "Groq's" : "Google's"} API — this app has no server of its own.
+          </p>
         </div>
-        <div className="relative">
-          <input
-            type={show ? "text" : "password"}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={info.placeholder}
-            className="w-full rounded-lg border border-ink/20 px-4 py-2 pr-16 text-sm bg-card font-mono"
-          />
-          <button
-            type="button"
-            onClick={() => setShow((s) => !s)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-ink/50 hover:text-ink"
-          >
-            {show ? "Hide" : "Show"}
-          </button>
+      ) : (
+        <div className="rounded-lg border border-dashed border-ink/20 px-4 py-3 bg-card">
+          <p className="text-sm font-medium">No API key needed</p>
+          <p className="text-xs text-ink/45 mt-1">
+            Translates directly in your browser using Google's public translation endpoint — free
+            and unlimited, but plain machine translation: no glossary consistency, no domain-aware
+            phrasing, and no cross-chunk continuity like the AI providers offer. Good for quick or
+            high-volume jobs where perfect literary nuance matters less than cost.
+          </p>
         </div>
-        <p className="text-xs text-ink/45 mt-1.5">
-          Stored only in your browser (localStorage) and sent directly to{" "}
-          {provider === "groq" ? "Groq's" : "Google's"} API — this app has no server of its own.
-        </p>
-      </div>
+      )}
     </div>
   );
 }

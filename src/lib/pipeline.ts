@@ -1,12 +1,15 @@
 import * as geminiEngine from "./gemini";
 import * as groqEngine from "./groq";
+import * as googleTranslateEngine from "./googleTranslate";
 import type { Domain, GlossaryEntry, SourceLang, TargetLang } from "./gemini";
 import type { Provider } from "./settings";
 
-// Both engines expose the same shape (translateChunk / buildGlossary), so the provider
+// All three engines expose the same shape (translateChunk / buildGlossary), so the provider
 // choice is just which module we point at — the rest of the pipeline doesn't need to care.
 function engineFor(provider: Provider) {
-  return provider === "groq" ? groqEngine : geminiEngine;
+  if (provider === "groq") return groqEngine;
+  if (provider === "google") return googleTranslateEngine;
+  return geminiEngine;
 }
 import { buildDocx, chunkBlocks, parseDocxToBlocks } from "./docxFile";
 import type { Chunk, TextBlock } from "./docxFile";

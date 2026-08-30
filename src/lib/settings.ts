@@ -6,7 +6,7 @@ const GROQ_KEY = "anekabhasa.groq_api_key";
 const PROVIDER_KEY = "anekabhasa.provider";
 const MODEL_KEY = "anekabhasa.model";
 
-export type Provider = "gemini" | "groq";
+export type Provider = "gemini" | "groq" | "google";
 
 export interface ModelOption {
   provider: Provider;
@@ -36,6 +36,12 @@ export const MODEL_OPTIONS: ModelOption[] = [
     label: "GPT-OSS 120B (Groq)",
     note: "Groq's latest free model, 131K context",
   },
+  {
+    provider: "google",
+    id: "google-translate-free",
+    label: "Google Translate (Free, no key)",
+    note: "Unlimited, zero-cost machine translation — no glossary or domain tuning",
+  },
 ];
 
 export function getApiKey(): string {
@@ -64,7 +70,8 @@ export function setGroqApiKey(key: string): void {
 
 export function getProvider(): Provider {
   const v = localStorage.getItem(PROVIDER_KEY);
-  return v === "groq" ? "groq" : "gemini";
+  if (v === "groq" || v === "google") return v;
+  return "gemini";
 }
 
 export function setProvider(p: Provider): void {
