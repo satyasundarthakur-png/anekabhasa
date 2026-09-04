@@ -25,7 +25,14 @@ export type Lang =
 // the app that refer to SourceLang/TargetLang keep working unchanged.
 export type SourceLang = Lang;
 export type TargetLang = Lang;
-export type Domain = "spiritual" | "literature" | "medical";
+export type Domain =
+  | "spiritual"
+  | "literature"
+  | "medical"
+  | "cinematic"
+  | "manoj-das"
+  | "mayadhar-mansingh"
+  | "swami-akhandananda";
 
 export interface GlossaryEntry {
   source: string;
@@ -56,6 +63,14 @@ const DOMAIN_HINTS: Record<Domain, string> = {
     "This is literary text — poetry, prose, fiction, or narrative manuscript material. Preserve tone, voice, rhythm, and imagery; prioritize natural, idiomatic phrasing in the target language over literal word-for-word rendering, while staying faithful to meaning. Preserve figures of speech and cultural references rather than flattening them.",
   medical:
     "This is medical/clinical text — case notes, textbook material, formularies, or traditional-medicine (Ayurvedic) content. Use precise standard medical terminology in the target language; keep drug names, dosages, anatomical terms, and clinical measurements unchanged. For Ayurvedic/traditional-medicine terms without a direct clinical equivalent, keep the original term (transliterated) alongside a brief clarifying gloss on first use rather than inventing a translation.",
+  cinematic:
+    "Render this as natural spoken dialogue in the style of film dialogue — dramatic rhythm and punch, short emotive sentences, everyday conversational vocabulary and address forms. Do NOT use literary/Sanskritized phrasing, and do NOT use English loanwords or internet-style slang. The line should sound like something a character would actually say on screen — direct, expressive, well-timed — while staying fully faithful to the original meaning.",
+  "manoj-das":
+    "Translate in the literary voice associated with the Odia writer Manoj Das — simple, lucid, gently narrative prose with warmth and quiet irony, often blending everyday rural/small-town life with an undercurrent of the mystical or philosophical. Favor clear, unhurried sentences and understated emotion over ornate or dramatic phrasing. Do not reproduce any of his actual published text — this is a stylistic register to translate INTO, not a source to quote from.",
+  "mayadhar-mansingh":
+    "Translate in the literary voice associated with the Odia poet and writer Mayadhar Mansingh — lyrical, romantic, and rhythmic language with strong imagery drawn from nature and Odia cultural/historical life, and a scholarly but emotionally rich sensibility. Favor evocative, cadenced phrasing over flat or purely functional prose. Do not reproduce any of his actual published text — this is a stylistic register to translate INTO, not a source to quote from.",
+  "swami-akhandananda":
+    "Translate in the voice of a Vedantic monastic teacher in the tradition of Swami Akhandananda — simple, direct, compassionate spiritual language aimed at a general audience, favoring plain clarity and devotional warmth over scholarly or ornate phrasing. Keep core Sanskrit/spiritual terms transliterated consistently rather than diluted into casual paraphrase. Do not reproduce any of his actual published text — this is a stylistic register to translate INTO, not a source to quote from.",
 };
 
 const DEFAULT_MODEL = "gemini-2.5-flash";

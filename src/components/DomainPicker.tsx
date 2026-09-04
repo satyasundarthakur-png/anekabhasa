@@ -4,6 +4,10 @@ const DOMAINS: { value: Domain; label: string }[] = [
   { value: "spiritual", label: "Spiritual / Devotional" },
   { value: "literature", label: "Literature" },
   { value: "medical", label: "Medical" },
+  { value: "cinematic", label: "Cinematic / Dialogue" },
+  { value: "manoj-das", label: "Writer's Tone: Manoj Das" },
+  { value: "mayadhar-mansingh", label: "Writer's Tone: Mayadhar Mansingh" },
+  { value: "swami-akhandananda", label: "Writer's Tone: Swami Akhandananda" },
 ];
 
 interface Props {

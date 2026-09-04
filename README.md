@@ -38,6 +38,18 @@ A domain picker tunes translation register and terminology:
 - **Medical** — clinical notes, textbooks, formularies, and traditional (Ayurvedic) medicine
   content. Keeps drug names, dosages, and anatomical terms unchanged; unfamiliar Ayurvedic
   terms are kept transliterated with a brief gloss rather than invented.
+- **Cinematic / Dialogue** — natural spoken dialogue with the rhythm and punch of film
+  dialogue. No literary/Sanskritized phrasing, and no English loanwords or slang.
+- **Writer's Tone: Manoj Das** — simple, lucid, gently narrative prose with warmth and
+  quiet irony, in the stylistic register associated with the Odia writer Manoj Das.
+- **Writer's Tone: Mayadhar Mansingh** — lyrical, romantic, rhythmic language with strong
+  natural imagery, in the stylistic register associated with the Odia poet Mayadhar
+  Mansingh.
+- **Writer's Tone: Swami Akhandananda** — simple, direct, compassionate Vedantic teaching
+  voice, in the stylistic register associated with Swami Akhandananda.
+
+These four are stylistic *registers* the model translates into — they do not reproduce
+or quote any of these writers'/teachers' actual published text.
 
 ## Gemini API key
 
